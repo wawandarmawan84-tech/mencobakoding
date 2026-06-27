@@ -12,17 +12,18 @@
     <nav class="space-y-1 px-3 py-4">
         @php
             $menu = [
-                ['label' => 'Dashboard', 'url' => route('dashboard'), 'pattern' => 'dashboard', 'icon' => '◉'],
-                ['label' => 'Pengaduan', 'url' => url('/pengaduan'), 'pattern' => 'pengaduan', 'icon' => '◌'],
-                ['label' => 'Kategori', 'url' => url('/kategori'), 'pattern' => 'kategori', 'icon' => '◎'],
-                ['label' => 'Profil', 'url' => url('/profile'), 'pattern' => 'profile', 'icon' => '◍'],
+                ['label' => 'Dashboard', 'route' => 'dashboard', 'url' => route('dashboard'), 'icon' => '◉'],
+                ['label' => 'Pengaduan', 'route' => 'pengaduan.*', 'url' => url('/pengaduan'), 'icon' => '◌'],
+                ['label' => 'Kategori', 'route' => 'kategori.*', 'url' => url('/kategori'), 'icon' => '◎'],
+                ['label' => 'Profil', 'route' => 'profile', 'url' => url('/profile'), 'icon' => '◍'],
             ];
         @endphp
 
         @foreach ($menu as $item)
             @php
-                $isActive = request()->is($item['pattern'] . '*') || request()->fullUrlIs($item['url']);
+                $isActive = request()->routeIs($item['route']);
             @endphp
+
             <a href="{{ $item['url'] }}"
                class="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition {{ $isActive ? 'bg-emerald-500 text-white shadow' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
                 <span class="text-base">{{ $item['icon'] }}</span>
