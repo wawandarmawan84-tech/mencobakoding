@@ -33,9 +33,18 @@ class Pengaduan extends Model
     public static function generateNomor(): string
     {
         $year = date('Y');
-        $last = static::whereYear('created_at', $year)->count();
+        $lastNomor = static::whereYear('created_at', $year)
+            ->whereNotNull('nomor_aduan')
+            ->orderByDesc('id')
+            ->value('nomor_aduan');
 
-        return 'ADU-' . $year . '-' . str_pad($last + 1, 3, '0', STR_PAD_LEFT);
+        if (! $lastNomor || ! preg_match('/ADU-' . $year . '-(\d{3})$/', $lastNomor, $matches)) {
+            $next = 1;
+        } else {
+            $next = (int) $matches[1] + 1;
+        }
+
+        return sprintf('ADU-%s-%03d', $year, $next);
     }
 
     public function user(): BelongsTo
