@@ -31,6 +31,8 @@ class KategoriController extends Controller
             'is_active' => ['boolean'],
         ]);
 
+        $validated['is_active'] = $request->has('is_active');
+
         Kategori::create($validated);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan.');
@@ -49,6 +51,8 @@ class KategoriController extends Controller
             'icon' => ['nullable', 'string', 'max:50'],
             'is_active' => ['boolean'],
         ]);
+
+        $validated['is_active'] = $request->has('is_active');
 
         $kategori->update($validated);
 
