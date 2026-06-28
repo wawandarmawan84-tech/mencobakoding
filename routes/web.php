@@ -9,8 +9,8 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware(['auth'])->prefix('admin')->name('kategori.')->group(function () {
-    Route::resource('kategori', KategoriController::class);
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('kategori.')->group(function () {
+    Route::resource('kategori', KategoriController::class)->except(['show']);
 });
 
 Route::get('/test', function () {

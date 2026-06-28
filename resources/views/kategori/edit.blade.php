@@ -28,6 +28,7 @@
             </div>
 
             <div class="flex items-center gap-2">
+                <input type="hidden" name="is_active" value="0" />
                 <input type="checkbox" name="is_active" value="1" {{ old('is_active', $kategori->is_active) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300" />
                 <label class="text-sm text-slate-700">Aktif</label>
             </div>
