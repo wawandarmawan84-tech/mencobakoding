@@ -31,7 +31,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        $user = Auth::user();
+        $defaultRedirect = match ($user->role) {
+            'warga' => url('/pengaduan'),
+            default => route('dashboard'),
+        };
+
+        return redirect()->intended($defaultRedirect);
     }
 
     public function destroy(Request $request)
