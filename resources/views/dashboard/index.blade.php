@@ -55,6 +55,57 @@
                 </div>
             </div>
         </div>
+
+        {{-- Tabel: 5 Pengaduan Terbaru --}}
+        <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-slate-900">Pengaduan Terbaru</h3>
+                <p class="mt-1 text-sm text-slate-500">5 pengaduan terakhir dari masyarakat.</p>
+            </div>
+
+            <div class="flow-root">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Nomor Aduan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Judul</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white">
+                                @foreach ($latestPengaduan as $item)
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-900">{{ $item['nomor'] }}</td>
+                                        <td class="px-4 py-4 text-sm text-slate-700">{{ $item['judul'] }}</td>
+                                        <td class="whitespace-nowrap px-4 py-4 text-sm">
+                                            @if ($item['status'] === 'menunggu')
+                                                <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
+                                                    ● Menunggu
+                                                </span>
+                                            @elseif ($item['status'] === 'diproses')
+                                                <span class="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
+                                                    ● Diproses
+                                                </span>
+                                            @elseif ($item['status'] === 'selesai')
+                                                <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                                    ✓ Selesai
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                                                    ✕ Ditolak
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
