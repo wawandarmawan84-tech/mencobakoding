@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PengaduanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 

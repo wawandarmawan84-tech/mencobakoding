@@ -12,8 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->group(['auth'], []);
-        $middleware->alias('role', \App\Http\Middleware\RoleMiddleware::class);
+        $middleware->alias(['auth' => \Illuminate\Auth\Middleware\Authenticate::class]);
+        $middleware->alias(['role' => \App\Http\Middleware\RoleMiddleware::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
