@@ -29,15 +29,30 @@
             </div>
         </div>
 
-        {{-- Chart: Pengaduan per Bulan --}}
-        <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-            <div class="mb-6">
-                <h3 class="text-lg font-semibold text-slate-900">Pengaduan Per Bulan</h3>
-                <p class="mt-1 text-sm text-slate-500">Tren pengaduan selama 12 bulan terakhir.</p>
+        {{-- Charts Grid --}}
+        <div class="grid gap-6 md:grid-cols-2">
+            {{-- Chart: Pengaduan per Bulan --}}
+            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900">Pengaduan Per Bulan</h3>
+                    <p class="mt-1 text-sm text-slate-500">Tren pengaduan selama 12 bulan terakhir.</p>
+                </div>
+
+                <div class="relative h-80 w-full">
+                    <canvas id="chartPengaduanPerBulan"></canvas>
+                </div>
             </div>
 
-            <div class="relative h-80 w-full">
-                <canvas id="chartPengaduanPerBulan"></canvas>
+            {{-- Chart: Status Pengaduan (Donut) --}}
+            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-slate-900">Status Pengaduan</h3>
+                    <p class="mt-1 text-sm text-slate-500">Distribusi status pengaduan saat ini dengan persentase.</p>
+                </div>
+
+                <div class="relative h-80 w-full">
+                    <canvas id="chartStatusPengaduan"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -133,6 +148,96 @@
                             grid: {
                                 display: false,
                                 drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart: Status Pengaduan (Donut)
+            const ctxStatus = document.getElementById('chartStatusPengaduan').getContext('2d');
+            const totalStatus = {{ $menunggu }} + {{ $diproses }} + {{ $selesai }};
+            const pctMenunggu = Math.round(({{ $menunggu }} / totalStatus) * 100);
+            const pctDiproses = Math.round(({{ $diproses }} / totalStatus) * 100);
+            const pctSelesai = Math.round(({{ $selesai }} / totalStatus) * 100);
+
+            new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Menunggu (' + pctMenunggu + '%)',
+                        'Diproses (' + pctDiproses + '%)',
+                        'Selesai (' + pctSelesai + '%)'
+                    ],
+                    datasets: [
+                        {
+                            label: 'Pengaduan',
+                            data: [
+                                {{ $menunggu }},
+                                {{ $diproses }},
+                                {{ $selesai }}
+                            ],
+                            backgroundColor: [
+                                'rgba(251, 191, 36, 0.7)',      // Amber - Menunggu
+                                'rgba(14, 165, 233, 0.7)',      // Sky - Diproses
+                                'rgba(16, 185, 129, 0.7)',      // Emerald - Selesai
+                            ],
+                            borderColor: [
+                                'rgba(251, 191, 36, 1)',        // Amber
+                                'rgba(14, 165, 233, 1)',        // Sky
+                                'rgba(16, 185, 129, 1)',        // Emerald
+                            ],
+                            borderWidth: 2,
+                            hoverBackgroundColor: [
+                                'rgba(251, 191, 36, 0.9)',
+                                'rgba(14, 165, 233, 0.9)',
+                                'rgba(16, 185, 129, 0.9)',
+                            ],
+                            hoverBorderColor: [
+                                'rgba(251, 191, 36, 1)',
+                                'rgba(14, 165, 233, 1)',
+                                'rgba(16, 185, 129, 1)',
+                            ]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgba(100, 116, 139, 1)',
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 13,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            borderColor: 'rgba(100, 116, 139, 0.5)',
+                            borderWidth: 1,
+                            displayColors: true,
+                            callbacks: {
+                                label: function (context) {
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return context.label.split('(')[0].trim() + ': ' + value + ' laporan (' + percentage + '%)';
+                                }
                             }
                         }
                     }
