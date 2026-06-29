@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\ProfileController;
@@ -32,7 +33,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
 });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('kategori.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', UserController::class)->except(['show']);
     Route::resource('kategori', KategoriController::class)->except(['show']);
 });
 
