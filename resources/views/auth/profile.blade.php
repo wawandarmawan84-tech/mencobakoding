@@ -24,17 +24,14 @@
                 @csrf
                 @method('PUT')
 
-                <div class="flex items-center space-x-4">
-                    <div class="h-20 w-20 overflow-hidden rounded-full bg-gray-200">
-                        @if ($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="h-full w-full object-cover">
-                        @else
-                            <div class="flex h-full w-full items-center justify-center text-gray-500">Avatar</div>
-                        @endif
+                <div class="flex flex-col items-center space-y-4 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
+                    <div class="h-24 w-24 overflow-hidden rounded-full border-4 border-indigo-100 bg-gray-200 shadow-sm">
+                        <img id="avatarPreview" src="@if ($user->avatar) {{ asset('storage/' . $user->avatar) }} @else {{ asset('images/default-avatar.svg') }} @endif" alt="Avatar" class="h-full w-full object-cover">
                     </div>
-                    <div>
+                    <div class="w-full sm:flex-1">
                         <label for="avatar" class="block text-sm font-medium text-gray-700">Foto Profil</label>
-                        <input id="avatar" name="avatar" type="file" class="mt-1 block w-full text-sm text-gray-500">
+                        <input id="avatar" name="avatar" type="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-full file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100">
+                        <p class="mt-1 text-xs text-gray-500">Format: JPG, PNG, WEBP. Maksimal 2MB.</p>
                         @error('avatar')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
                 </div>
@@ -65,5 +62,24 @@
             </form>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('avatar');
+            const preview = document.getElementById('avatarPreview');
+
+            if (input && preview) {
+                input.addEventListener('change', function (event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            preview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
