@@ -10,6 +10,12 @@
         <a href="{{ route('pengaduan.index') }}" class="text-sm text-blue-600 hover:underline">Kembali ke daftar</a>
     </div>
 
+    @if(session('success'))
+        <div class="mb-4 rounded border border-green-200 bg-green-50 p-4 text-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="grid gap-6 lg:grid-cols-3">
         <div class="lg:col-span-2 space-y-4">
             <div class="bg-white shadow rounded p-5">
@@ -90,6 +96,36 @@
                         <p class="mt-1 text-sm text-slate-800">{{ optional($pengaduan->petugas)->name ?? 'Belum ditugaskan' }}</p>
                     </div>
                 </div>
+
+                @if(auth()->user()->isPetugas())
+                    <form method="POST" action="{{ route('pengaduan.updateStatus', $pengaduan) }}" class="mt-6 space-y-4">
+                        @csrf
+                        @method('PATCH')
+
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-slate-700">Update Status</label>
+                            <select id="status" name="status" class="mt-1 block w-full rounded border-gray-200">
+                                <option value="menunggu" {{ $pengaduan->status === 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                                <option value="diproses" {{ $pengaduan->status === 'diproses' ? 'selected' : '' }}>Diproses</option>
+                                <option value="selesai" {{ $pengaduan->status === 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                <option value="ditolak" {{ $pengaduan->status === 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            </select>
+                            @error('status')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="catatan_petugas" class="block text-sm font-medium text-slate-700">Catatan Penanganan</label>
+                            <textarea id="catatan_petugas" name="catatan_petugas" rows="4" class="mt-1 block w-full rounded border-gray-200">{{ old('catatan_petugas', $pengaduan->catatan_petugas) }}</textarea>
+                            @error('catatan_petugas')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Simpan Perubahan</button>
+                    </form>
+                @endif
             </div>
 
             <div class="bg-white shadow rounded p-5">

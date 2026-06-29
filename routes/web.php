@@ -28,6 +28,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 Route::middleware(['auth'])->group(function () {
     Route::get('/pengaduan', [PengaduanController::class, 'index'])->name('pengaduan.index');
     Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])->name('pengaduan.show');
+    Route::patch('/pengaduan/{pengaduan}/status', [PengaduanController::class, 'updateStatus'])->name('pengaduan.updateStatus')->middleware('role:petugas');
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -77,10 +77,37 @@ class PengaduanController extends Controller
      */
     public function show(Pengaduan $pengaduan)
     {
-        abort_unless($pengaduan->user_id === auth()->id(), 403);
+        $user = auth()->user();
 
-        $pengaduan->load(['kategori', 'lampiran']);
+        abort_unless(
+            $pengaduan->user_id === $user->id || $user->isPetugas() || $user->isAdmin(),
+            403
+        );
+
+        $pengaduan->load(['kategori', 'lampiran', 'petugas']);
 
         return view('pengaduan.show', compact('pengaduan'));
+    }
+
+    /**
+     * Update status and note for a pengaduan by petugas.
+     */
+    public function updateStatus(Request $request, Pengaduan $pengaduan): RedirectResponse
+    {
+        abort_unless(auth()->user()->isPetugas(), 403);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:menunggu,diproses,selesai,ditolak'],
+            'catatan_petugas' => ['nullable', 'string'],
+        ]);
+
+        $pengaduan->update([
+            'status' => $validated['status'],
+            'catatan_petugas' => $validated['catatan_petugas'] ?? null,
+            'petugas_id' => auth()->id(),
+            'tanggal_selesai' => $validated['status'] === 'selesai' ? now()->toDateString() : null,
+        ]);
+
+        return redirect()->route('pengaduan.show', $pengaduan)->with('success', 'Status pengaduan berhasil diperbarui.');
     }
 }
