@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengaduan;
 use App\Models\Kategori;
+use App\Models\Pengaduan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -70,6 +70,40 @@ class PengaduanController extends Controller
         $kategoris = Kategori::where('is_active', 1)->orderBy('nama_kategori')->get();
 
         return view('pengaduan.index', compact('pengaduans', 'kategoris'));
+    }
+
+    /**
+     * Display the form to create a new pengaduan.
+     */
+    public function create()
+    {
+        $kategoris = Kategori::where('is_active', 1)->orderBy('nama_kategori')->get();
+
+        return view('pengaduan.create', compact('kategoris'));
+    }
+
+    /**
+     * Display the incoming pengaduan page for petugas with priority filter.
+     */
+    public function masuk(Request $request)
+    {
+        abort_unless(auth()->user()->isPetugas(), 403);
+
+        $prioritas = $request->query('prioritas');
+
+        $query = Pengaduan::with(['kategori', 'user'])
+            ->whereIn('status', ['menunggu', 'diproses']);
+
+        if ($prioritas) {
+            $query->where('prioritas', $prioritas);
+        }
+
+        $pengaduans = $query->orderByRaw("FIELD(prioritas, 'darurat', 'tinggi', 'normal', 'rendah')")
+            ->orderByDesc('created_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('pengaduan.masuk', compact('pengaduans', 'prioritas'));
     }
 
     /**

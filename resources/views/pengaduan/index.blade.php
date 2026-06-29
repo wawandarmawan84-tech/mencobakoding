@@ -2,9 +2,14 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto">
-    <div class="flex items-center justify-between mb-4">
-        <h1 class="text-2xl font-semibold">Daftar Pengaduan Saya</h1>
-        <a href="/" class="text-sm text-slate-600">Kembali</a>
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
+        <div>
+            <h1 class="text-2xl font-semibold">Daftar Pengaduan Saya</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('pengaduan.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Buat Pengaduan Baru</a>
+            <a href="/" class="text-sm text-slate-600">Kembali</a>
+        </div>
     </div>
 
     <form method="GET" action="{{ route('pengaduan.index') }}" class="mb-4 flex gap-3 items-end">
