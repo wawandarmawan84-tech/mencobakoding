@@ -25,11 +25,17 @@ class RegisteredUserController extends Controller
             'alamat' => ['nullable', 'string', 'max:1000'],
             'password' => ['required', 'confirmed', 'min:8'],
         ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
             'nik.required' => 'NIK wajib diisi.',
             'nik.digits' => 'NIK harus terdiri dari 16 digit angka.',
             'nik.unique' => 'NIK sudah terdaftar.',
             'no_hp.required' => 'Nomor HP wajib diisi.',
             'no_hp.regex' => 'Nomor HP harus berupa nomor handphone Indonesia yang valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak sesuai.',
         ]);
 
