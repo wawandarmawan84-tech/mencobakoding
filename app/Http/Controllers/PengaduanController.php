@@ -71,4 +71,16 @@ class PengaduanController extends Controller
 
         return view('pengaduan.index', compact('pengaduans', 'kategoris'));
     }
+
+    /**
+     * Display the detail page for a single pengaduan.
+     */
+    public function show(Pengaduan $pengaduan)
+    {
+        abort_unless($pengaduan->user_id === auth()->id(), 403);
+
+        $pengaduan->load(['kategori', 'lampiran']);
+
+        return view('pengaduan.show', compact('pengaduan'));
+    }
 }
