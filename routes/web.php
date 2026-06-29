@@ -11,6 +11,7 @@ Route::get('/', function () {
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/pengaduan', [PengaduanController::class, 'index'])->name('pengaduan.index');
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
 });
 
