@@ -15,9 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('nik', 16)->unique()->nullable();
+            $table->string('no_hp', 15)->nullable();
+            $table->text('alamat')->nullable();
+            $table->enum('role', ['warga', 'petugas', 'admin'])->default('warga');
+            $table->string('avatar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 
