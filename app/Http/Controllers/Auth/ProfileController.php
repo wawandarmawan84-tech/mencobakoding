@@ -50,7 +50,8 @@ class ProfileController extends Controller
             $data['avatar'] = $path;
         }
 
-        $user->update($data);
+        $user->fill($data);
+        $user->save();
 
         return redirect()->route('profile.edit')->with('status', 'Profil berhasil diperbarui.');
     }
