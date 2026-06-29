@@ -45,6 +45,7 @@
                     <th class="px-4 py-3 text-left text-sm font-medium">Status</th>
                     <th class="px-4 py-3 text-left text-sm font-medium">Prioritas</th>
                     <th class="px-4 py-3 text-left text-sm font-medium">Tanggal</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -68,6 +69,9 @@
                         </td>
                         <td class="px-4 py-3 text-sm">{{ ucfirst($p->prioritas) }}</td>
                         <td class="px-4 py-3 text-sm">{{ $p->created_at->format('Y-m-d') }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <a href="{{ route('pengaduan.show', $p) }}" class="text-blue-600 hover:underline">Detail</a>
+                        </td>
                     </tr>
                 @empty
                     <tr>

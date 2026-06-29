@@ -26,15 +26,15 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->midd
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
-<<<<<<< HEAD
     Route::get('/pengaduan', [PengaduanController::class, 'index'])->name('pengaduan.index');
-=======
+    Route::get('/pengaduan/{pengaduan}', [PengaduanController::class, 'show'])->name('pengaduan.show');
+    Route::patch('/pengaduan/{pengaduan}/status', [PengaduanController::class, 'updateStatus'])->name('pengaduan.updateStatus')->middleware('role:petugas');
+    Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
->>>>>>> 29cb57e647db30ac43988a2dc7533a560a9f950e
-    Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
