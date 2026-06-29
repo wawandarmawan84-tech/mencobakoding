@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PengaduanController;
@@ -26,6 +27,8 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/password', [PasswordController::class, 'edit'])->name('password.edit');
+    Route::put('/password', [PasswordController::class, 'update'])->name('password.update');
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('pengaduan.store');
 });
 
