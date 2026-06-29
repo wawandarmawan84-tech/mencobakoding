@@ -8,6 +8,9 @@
         <title>{{ config('app.name', 'SiPenKa') }}</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        {{-- Chart.js CDN --}}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body class="min-h-screen bg-slate-100 text-slate-800">
         <div class="min-h-screen">
