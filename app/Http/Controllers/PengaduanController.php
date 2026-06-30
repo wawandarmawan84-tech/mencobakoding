@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
 use App\Models\Pengaduan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,5 +43,105 @@ class PengaduanController extends Controller
         }
 
         return redirect()->back()->with('success', 'Pengaduan berhasil dikirim.');
+    }
+
+    /**
+     * Display a listing of the authenticated user's pengaduan with filters.
+     */
+    public function index(Request $request)
+    {
+        $userId = auth()->id();
+
+        $status = $request->query('status');
+        $kategoriId = $request->query('kategori_id');
+
+        $query = Pengaduan::where('user_id', $userId);
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($kategoriId) {
+            $query->where('kategori_id', $kategoriId);
+        }
+
+        $pengaduans = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+
+        $kategoris = Kategori::where('is_active', 1)->orderBy('nama_kategori')->get();
+
+        return view('pengaduan.index', compact('pengaduans', 'kategoris'));
+    }
+
+    /**
+     * Display the form to create a new pengaduan.
+     */
+    public function create()
+    {
+        $kategoris = Kategori::where('is_active', 1)->orderBy('nama_kategori')->get();
+
+        return view('pengaduan.create', compact('kategoris'));
+    }
+
+    /**
+     * Display the incoming pengaduan page for petugas with priority filter.
+     */
+    public function masuk(Request $request)
+    {
+        abort_unless(auth()->user()->isPetugas(), 403);
+
+        $prioritas = $request->query('prioritas');
+
+        $query = Pengaduan::with(['kategori', 'user'])
+            ->whereIn('status', ['menunggu', 'diproses']);
+
+        if ($prioritas) {
+            $query->where('prioritas', $prioritas);
+        }
+
+        $pengaduans = $query->orderByRaw("FIELD(prioritas, 'darurat', 'tinggi', 'normal', 'rendah')")
+            ->orderByDesc('created_at')
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('pengaduan.masuk', compact('pengaduans', 'prioritas'));
+    }
+
+    /**
+     * Display the detail page for a single pengaduan.
+     */
+    public function show(Pengaduan $pengaduan)
+    {
+        $user = auth()->user();
+
+        abort_unless(
+            $pengaduan->user_id === $user->id || $user->isPetugas() || $user->isAdmin(),
+            403
+        );
+
+        $pengaduan->load(['kategori', 'lampiran', 'petugas']);
+
+        return view('pengaduan.show', compact('pengaduan'));
+    }
+
+    /**
+     * Update status and note for a pengaduan by petugas.
+     */
+    public function updateStatus(Request $request, Pengaduan $pengaduan): RedirectResponse
+    {
+        abort_unless(auth()->user()->isPetugas(), 403);
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:menunggu,diproses,selesai,ditolak'],
+            'catatan_petugas' => ['nullable', 'string'],
+        ]);
+
+        $pengaduan->update([
+            'status' => $validated['status'],
+            'catatan_petugas' => $validated['catatan_petugas'] ?? null,
+            'petugas_id' => auth()->id(),
+            'tanggal_selesai' => $validated['status'] === 'selesai' ? now()->toDateString() : null,
+        ]);
+
+        return redirect()->route('pengaduan.show', $pengaduan)->with('success', 'Status pengaduan berhasil diperbarui.');
     }
 }
