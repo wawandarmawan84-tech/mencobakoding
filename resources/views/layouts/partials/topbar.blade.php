@@ -1,8 +1,15 @@
 <header class="border-b border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-6 lg:px-8">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <p class="text-sm font-medium text-slate-500">Selamat datang</p>
-            <h2 class="text-xl font-semibold text-slate-800">Sistem Pengaduan Masyarakat</h2>
+        <div class="flex items-center gap-3">
+            <button type="button" data-sidebar-toggle class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden" aria-label="Buka menu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+            <div>
+                <p class="text-sm font-medium text-slate-500">Selamat datang</p>
+                <h2 class="text-xl font-semibold text-slate-800">Sistem Pengaduan Masyarakat</h2>
+            </div>
         </div>
 
         <div class="flex items-center gap-3">
