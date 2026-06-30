@@ -108,6 +108,10 @@
         </div>
     </div>
 
+    @php
+        $statusTotal = max(1, $menunggu + $diproses + $selesai + ($ditolak ?? 0));
+    @endphp
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('chartPengaduanPerBulan').getContext('2d');
@@ -207,7 +211,7 @@
 
             // Chart: Status Pengaduan (Donut)
             const ctxStatus = document.getElementById('chartStatusPengaduan').getContext('2d');
-            const totalStatus = {{ $menunggu }} + {{ $diproses }} + {{ $selesai }};
+            const totalStatus = {{ $statusTotal }};
             const pctMenunggu = Math.round(({{ $menunggu }} / totalStatus) * 100);
             const pctDiproses = Math.round(({{ $diproses }} / totalStatus) * 100);
             const pctSelesai = Math.round(({{ $selesai }} / totalStatus) * 100);
