@@ -2,48 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengaduan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $totalPengaduan = 42;
-        $menunggu = 15;
-        $diproses = 20;
-        $selesai = 7;
+        $pengaduanQuery = Pengaduan::query();
 
-        // Data dummy untuk 12 bulan terakhir (Fase 2)
-        $pengaduanPerBulan = [
-            ['bulan' => 'Jan', 'jumlah' => 2],
-            ['bulan' => 'Feb', 'jumlah' => 3],
-            ['bulan' => 'Mar', 'jumlah' => 5],
-            ['bulan' => 'Apr', 'jumlah' => 4],
-            ['bulan' => 'May', 'jumlah' => 6],
-            ['bulan' => 'Jun', 'jumlah' => 3],
-            ['bulan' => 'Jul', 'jumlah' => 7],
-            ['bulan' => 'Aug', 'jumlah' => 5],
-            ['bulan' => 'Sep', 'jumlah' => 4],
-            ['bulan' => 'Oct', 'jumlah' => 2],
-            ['bulan' => 'Nov', 'jumlah' => 1],
-            ['bulan' => 'Dec', 'jumlah' => 0],
-        ];
+        $totalPengaduan = (clone $pengaduanQuery)->count();
+        $menunggu = (clone $pengaduanQuery)->where('status', 'menunggu')->count();
+        $diproses = (clone $pengaduanQuery)->where('status', 'diproses')->count();
+        $selesai = (clone $pengaduanQuery)->where('status', 'selesai')->count();
+        $ditolak = (clone $pengaduanQuery)->where('status', 'ditolak')->count();
 
-        $latestPengaduan = [
-            ['nomor' => 'ADU-2025-038', 'judul' => 'Jalan rusak di RW 03', 'status' => 'menunggu'],
-            ['nomor' => 'ADU-2025-039', 'judul' => 'Lampu jalan padam', 'status' => 'diproses'],
-            ['nomor' => 'ADU-2025-040', 'judul' => 'Sampah menumpuk di selokan', 'status' => 'selesai'],
-            ['nomor' => 'ADU-2025-041', 'judul' => 'Air PDAM tidak mengalir', 'status' => 'menunggu'],
-            ['nomor' => 'ADU-2025-042', 'judul' => 'Laporan keamanan ronda malam', 'status' => 'diproses'],
-        ];
+        $pengaduanPerBulan = [];
+        $now = Carbon::now();
+
+        for ($i = 11; $i >= 0; $i--) {
+            $date = $now->copy()->subMonths($i);
+            $start = $date->copy()->startOfMonth()->startOfDay();
+            $end = $date->copy()->endOfMonth()->endOfDay();
+
+            $pengaduanPerBulan[] = [
+                'bulan' => $date->format('M'),
+                'jumlah' => Pengaduan::whereBetween('created_at', [$start, $end])->count(),
+            ];
+        }
+
+        $latestPengaduan = Pengaduan::query()
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn (Pengaduan $pengaduan) => [
+                'nomor' => $pengaduan->nomor_aduan,
+                'judul' => $pengaduan->judul,
+                'status' => $pengaduan->status,
+            ])
+            ->toArray();
+
+        $kategoriStats = collect();
+
+        if ($totalPengaduan > 0) {
+            $kategoriStats = Pengaduan::query()
+                ->selectRaw('kategori_id, COUNT(*) as total')
+                ->with('kategori')
+                ->groupBy('kategori_id')
+                ->orderByDesc('total')
+                ->get()
+                ->map(function ($item) use ($totalPengaduan) {
+                    return [
+                        'nama_kategori' => optional($item->kategori)->nama_kategori ?? 'Tanpa Kategori',
+                        'total' => (int) $item->total,
+                        'persentase' => round(($item->total / $totalPengaduan) * 100),
+                    ];
+                });
+        }
 
         return view('dashboard.index', compact(
             'totalPengaduan',
             'menunggu',
             'diproses',
             'selesai',
+            'ditolak',
             'pengaduanPerBulan',
-            'latestPengaduan'
+            'latestPengaduan',
+            'kategoriStats'
         ));
     }
 }
