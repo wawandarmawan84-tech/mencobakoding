@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
+    Route::post('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::resource('kategori', KategoriController::class)->except(['show']);
 });
 
