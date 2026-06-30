@@ -15,6 +15,8 @@
     <body class="min-h-screen bg-slate-100 text-slate-800">
         <div class="min-h-screen">
             <div class="flex min-h-screen flex-col lg:flex-row">
+                <div data-sidebar-overlay class="fixed inset-0 z-40 hidden bg-slate-950/50 lg:hidden"></div>
+
                 @include('layouts.partials.sidebar')
 
                 <div class="flex-1">
@@ -26,5 +28,46 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const toggle = document.querySelector('[data-sidebar-toggle]');
+                const sidebar = document.querySelector('[data-sidebar]');
+                const overlay = document.querySelector('[data-sidebar-overlay]');
+
+                if (!toggle || !sidebar || !overlay) {
+                    return;
+                }
+
+                const openSidebar = () => {
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebar.classList.add('translate-x-0');
+                    overlay.classList.remove('hidden');
+                    document.body.classList.add('overflow-hidden');
+                };
+
+                const closeSidebar = () => {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('translate-x-0');
+                    overlay.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                };
+
+                toggle.addEventListener('click', function () {
+                    if (sidebar.classList.contains('translate-x-0')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+
+                overlay.addEventListener('click', closeSidebar);
+                window.addEventListener('resize', function () {
+                    if (window.innerWidth >= 1024) {
+                        closeSidebar();
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
