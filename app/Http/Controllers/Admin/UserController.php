@@ -14,12 +14,18 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         $role = $request->query('role');
+        $status = $request->query('status');
 
-        $users = User::when($role && in_array($role, ['warga', 'petugas', 'admin']), function ($query) use ($role) {
-            $query->where('role', $role);
-        })->latest()->get();
+        $users = User::query()
+            ->when($status === 'trashed', fn ($query) => $query->onlyTrashed())
+            ->when($status === 'all', fn ($query) => $query->withTrashed())
+            ->when($role && in_array($role, ['warga', 'petugas', 'admin']), function ($query) use ($role) {
+                $query->where('role', $role);
+            })
+            ->latest()
+            ->get();
 
-        return view('admin.users.index', compact('users', 'role'));
+        return view('admin.users.index', compact('users', 'role', 'status'));
     }
 
     public function create(): View
@@ -73,5 +79,13 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
+    }
+
+    public function restore($id): RedirectResponse
+    {
+        $user = User::onlyTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()->route('admin.users.index', ['status' => 'trashed'])->with('success', 'User berhasil direstore.');
     }
 }
