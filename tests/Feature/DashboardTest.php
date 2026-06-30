@@ -63,6 +63,12 @@ class DashboardTest extends TestCase
         $response->assertViewHas('diproses', 1);
         $response->assertViewHas('selesai', 1);
 
+        $kategoriStats = $response->viewData('kategoriStats');
+        $this->assertCount(1, $kategoriStats);
+        $this->assertSame('Kebersihan', $kategoriStats[0]['nama_kategori']);
+        $this->assertSame(3, $kategoriStats[0]['total']);
+        $this->assertSame(100, $kategoriStats[0]['persentase']);
+
         $latestPengaduan = $response->viewData('latestPengaduan');
         $this->assertCount(3, $latestPengaduan);
         $this->assertSame('ADU-2025-003', $latestPengaduan[0]['nomor']);
