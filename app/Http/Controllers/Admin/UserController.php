@@ -11,11 +11,15 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::latest()->get();
+        $role = $request->query('role');
 
-        return view('admin.users.index', compact('users'));
+        $users = User::when($role && in_array($role, ['warga', 'petugas', 'admin']), function ($query) use ($role) {
+            $query->where('role', $role);
+        })->latest()->get();
+
+        return view('admin.users.index', compact('users', 'role'));
     }
 
     public function create(): View
