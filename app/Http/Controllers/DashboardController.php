@@ -43,6 +43,24 @@ class DashboardController extends Controller
             ])
             ->toArray();
 
+        $kategoriStats = collect();
+
+        if ($totalPengaduan > 0) {
+            $kategoriStats = Pengaduan::query()
+                ->selectRaw('kategori_id, COUNT(*) as total')
+                ->with('kategori')
+                ->groupBy('kategori_id')
+                ->orderByDesc('total')
+                ->get()
+                ->map(function ($item) use ($totalPengaduan) {
+                    return [
+                        'nama_kategori' => optional($item->kategori)->nama_kategori ?? 'Tanpa Kategori',
+                        'total' => (int) $item->total,
+                        'persentase' => round(($item->total / $totalPengaduan) * 100),
+                    ];
+                });
+        }
+
         return view('dashboard.index', compact(
             'totalPengaduan',
             'menunggu',
@@ -50,7 +68,8 @@ class DashboardController extends Controller
             'selesai',
             'ditolak',
             'pengaduanPerBulan',
-            'latestPengaduan'
+            'latestPengaduan',
+            'kategoriStats'
         ));
     }
 }

@@ -56,6 +56,32 @@
             </div>
         </div>
 
+        {{-- Statistik Per Kategori --}}
+        <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-slate-900">Statistik Per Kategori</h3>
+                <p class="mt-1 text-sm text-slate-500">Distribusi pengaduan berdasarkan kategori dengan persentase.</p>
+            </div>
+
+            @if ($kategoriStats->isNotEmpty())
+                <div class="space-y-4">
+                    @foreach ($kategoriStats as $kategori)
+                        <div>
+                            <div class="mb-2 flex items-center justify-between">
+                                <span class="text-sm font-semibold text-slate-700">{{ $kategori['nama_kategori'] }}</span>
+                                <span class="text-sm text-slate-500">{{ $kategori['total'] }} pengaduan · {{ $kategori['persentase'] }}%</span>
+                            </div>
+                            <div class="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                                <div class="h-2.5 rounded-full bg-sky-500" style="width: {{ min($kategori['persentase'], 100) }}%"></div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-sm text-slate-500">Belum ada data pengaduan untuk ditampilkan.</p>
+            @endif
+        </div>
+
         {{-- Tabel: 5 Pengaduan Terbaru --}}
         <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
             <div class="mb-6">
