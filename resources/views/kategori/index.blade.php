@@ -7,7 +7,7 @@
                 <h1 class="text-2xl font-semibold text-slate-800">Manajemen Kategori</h1>
                 <p class="mt-2 text-sm text-slate-500">Kelola kategori pengaduan untuk admin.</p>
             </div>
-            <a href="{{ route('kategori.create') }}" class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+            <a href="{{ route('admin.kategori.create') }}" class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
                 Tambah Kategori
             </a>
         </div>
@@ -42,8 +42,8 @@
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('kategori.edit', $kategori) }}" class="text-sky-600 hover:text-sky-700">Edit</a>
-                                    <form action="{{ route('kategori.destroy', $kategori) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
+                                    <a href="{{ route('admin.kategori.edit', $kategori) }}" class="text-sky-600 hover:text-sky-700">Edit</a>
+                                    <form action="{{ route('admin.kategori.destroy', $kategori) }}" method="POST" onsubmit="return confirm('Hapus kategori ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-rose-600 hover:text-rose-700">Hapus</button>

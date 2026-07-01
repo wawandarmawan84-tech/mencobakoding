@@ -5,7 +5,7 @@
         <h1 class="text-2xl font-semibold text-slate-800">Tambah Kategori</h1>
         <p class="mt-2 text-sm text-slate-500">Buat kategori baru untuk pengaduan masyarakat.</p>
 
-        <form action="{{ route('kategori.store') }}" method="POST" class="mt-6 space-y-4">
+        <form action="{{ route('admin.kategori.store') }}" method="POST" class="mt-6 space-y-4">
             @csrf
 
             <div>
@@ -34,7 +34,7 @@
 
             <div class="flex items-center gap-3">
                 <button type="submit" class="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Simpan</button>
-                <a href="{{ route('kategori.index') }}" class="text-sm text-slate-600 hover:text-slate-800">Batal</a>
+                <a href="{{ route('admin.kategori.index') }}" class="text-sm text-slate-600 hover:text-slate-800">Batal</a>
             </div>
         </form>
     </div>

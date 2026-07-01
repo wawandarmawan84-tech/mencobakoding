@@ -13,6 +13,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Public redirect: keep old /kategori URL pointing to admin area
+Route::get('/kategori', function () {
+    return redirect()->route('admin.kategori.index');
+});
+
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 

@@ -14,7 +14,7 @@
             $menu = [
                 ['label' => 'Dashboard', 'route' => 'dashboard', 'url' => route('dashboard'), 'icon' => '◉'],
                 ['label' => 'Pengaduan', 'route' => 'pengaduan.*', 'url' => url('/pengaduan'), 'icon' => '◌'],
-                ['label' => 'Kategori', 'route' => 'kategori.*', 'url' => url('/kategori'), 'icon' => '◎'],
+                ['label' => 'Kategori', 'route' => 'admin.kategori.*', 'url' => url('/admin/kategori'), 'icon' => '◎'],
                 ['label' => 'Profil', 'route' => 'profile', 'url' => url('/profile'), 'icon' => '◍'],
             ];
         @endphp
