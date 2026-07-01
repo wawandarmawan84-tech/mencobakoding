@@ -17,51 +17,21 @@ class KategoriSeeder extends Seeder
     {
         $kategoris = [
             [
-                'nama_kategori' => 'Jalan & Infrastruktur',
-                'deskripsi'    => 'Kerusakan jalan, trotoar, drainase',
-                'icon'         => 'road',
+                'nama_kategori' => 'Pengaduan',
+                'deskripsi'    => 'Kategori untuk pengaduan masyarakat',
+                'icon'         => 'exclamation-circle',
                 'is_active'    => true,
             ],
             [
-                'nama_kategori' => 'Kebersihan & Sampah',
-                'deskripsi'    => 'Pengelolaan sampah dan sampah liar',
-                'icon'         => 'trash',
+                'nama_kategori' => 'Aspirasi',
+                'deskripsi'    => 'Kategori untuk aspirasi masyarakat',
+                'icon'         => 'chat-alt',
                 'is_active'    => true,
             ],
             [
-                'nama_kategori' => 'Penerangan Jalan',
-                'deskripsi'    => 'Lampu jalan mati atau rusak',
-                'icon'         => 'light-bulb',
-                'is_active'    => true,
-            ],
-            [
-                'nama_kategori' => 'Keamanan & Ketertiban',
-                'deskripsi'    => 'Permasalahan kriminal dan ketertiban umum',
-                'icon'         => 'shield-check',
-                'is_active'    => true,
-            ],
-            [
-                'nama_kategori' => 'Administrasi Kelurahan',
-                'deskripsi'    => 'Pelayanan surat menyurat dan administrasi',
-                'icon'         => 'document-text',
-                'is_active'    => true,
-            ],
-            [
-                'nama_kategori' => 'Kesehatan Lingkungan',
-                'deskripsi'    => 'Sanitasi, air bersih, dan penyakit lingkungan',
-                'icon'         => 'heart-pulse',
-                'is_active'    => true,
-            ],
-            [
-                'nama_kategori' => 'Fasilitas Umum',
-                'deskripsi'    => 'Taman, lapangan, pos kamling, dan fasilitas publik',
-                'icon'         => 'building-library',
-                'is_active'    => true,
-            ],
-            [
-                'nama_kategori' => 'Lainnya',
-                'deskripsi'    => 'Pengaduan di luar kategori yang tersedia',
-                'icon'         => 'ellipsis-horizontal',
+                'nama_kategori' => 'Permintaan Informasi',
+                'deskripsi'    => 'Kategori untuk permintaan informasi',
+                'icon'         => 'information-circle',
                 'is_active'    => true,
             ],
         ];
