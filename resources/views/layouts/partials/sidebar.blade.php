@@ -1,4 +1,4 @@
-<aside class="w-full bg-slate-900 text-slate-100 lg:w-72 lg:min-h-screen">
+<aside data-sidebar class="fixed inset-y-0 left-0 z-50 w-72 -translate-x-full transform bg-slate-900 text-slate-100 transition duration-300 ease-in-out lg:static lg:w-72 lg:min-h-screen lg:translate-x-0">
     <div class="flex items-center justify-between border-b border-slate-800 px-6 py-5">
         <div>
             <p class="text-lg font-semibold">SiPenKa</p>
