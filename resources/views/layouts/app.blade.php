@@ -9,13 +9,12 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        {{-- Chart.js CDN --}}
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
-    <body class="min-h-screen bg-slate-100 text-slate-800">
-        <div class="min-h-screen">
+    <body class="min-h-screen bg-slate-950 text-slate-100">
+        <div class="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_30%),linear-gradient(135deg,_#020617_0%,_#0f172a_100%)]">
             <div class="flex min-h-screen flex-col lg:flex-row">
-                <div data-sidebar-overlay class="fixed inset-0 z-40 hidden bg-slate-950/50 lg:hidden"></div>
+                <div data-sidebar-overlay class="fixed inset-0 z-40 hidden bg-slate-950/70 lg:hidden"></div>
 
                 @include('layouts.partials.sidebar')
 
