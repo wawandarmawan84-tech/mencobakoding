@@ -1,41 +1,71 @@
 @extends('layouts.app')
 
 @section('content')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const el = document.getElementById('runningText');
+            if (!el) return;
+
+            const items = [' wawan', 'Bulan', 'syabil', 'dila'];
+            let idx = 0;
+
+            // rotate text
+            setInterval(() => {
+                idx = (idx + 1) % items.length;
+                el.textContent = items[idx];
+            }, 2500);
+        });
+    </script>
+
+    @push('scripts')
+        <script>
+            // no-op (placeholder)
+        </script>
+    @endpush
     <div class="space-y-6">
+        {{-- Running Text / Rotating Credits --}}
+        <div class="rounded-3xl bg-slate-800/60 p-4 shadow-sm ring-1 ring-white/10 overflow-hidden">
+            <div class="whitespace-nowrap text-sm">
+                <span class="text-slate-200">Create by:</span>
+                <span id="runningText" class="ml-2 font-semibold text-white"> wawan</span>
+            </div>
+        </div>
+
         {{-- Statistik Cards --}}
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {{-- Card: Total Pengaduan --}}
-            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-                <p class="text-sm font-medium text-slate-500">Total Pengaduan</p>
-                <p class="mt-4 text-3xl font-semibold text-slate-900">{{ $totalPengaduan }}</p>
+            <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
+                <p class="text-sm font-medium text-slate-200">Total Pengaduan</p>
+                <p class="mt-4 text-3xl font-semibold text-white">{{ $totalPengaduan }}</p>
             </div>
 
             {{-- Card: Menunggu --}}
-            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-                <p class="text-sm font-medium text-slate-500">Menunggu</p>
-                <p class="mt-4 text-3xl font-semibold text-amber-500">{{ $menunggu }}</p>
+            <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
+                <p class="text-sm font-medium text-slate-200">Menunggu</p>
+                <p class="mt-4 text-3xl font-semibold text-amber-300">{{ $menunggu }}</p>
             </div>
 
             {{-- Card: Diproses --}}
-            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-                <p class="text-sm font-medium text-slate-500">Diproses</p>
-                <p class="mt-4 text-3xl font-semibold text-sky-500">{{ $diproses }}</p>
+            <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
+                <p class="text-sm font-medium text-slate-200">Diproses</p>
+                <p class="mt-4 text-3xl font-semibold text-sky-300">{{ $diproses }}</p>
             </div>
 
             {{-- Card: Selesai --}}
-            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-                <p class="text-sm font-medium text-slate-500">Selesai</p>
-                <p class="mt-4 text-3xl font-semibold text-emerald-500">{{ $selesai }}</p>
+            <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
+                <p class="text-sm font-medium text-slate-200">Selesai</p>
+                <p class="mt-4 text-3xl font-semibold text-emerald-300">{{ $selesai }}</p>
             </div>
         </div>
 
         {{-- Charts Grid --}}
         <div class="grid gap-6 md:grid-cols-2">
             {{-- Chart: Pengaduan per Bulan --}}
-            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
                 <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-slate-900">Pengaduan Per Bulan</h3>
-                    <p class="mt-1 text-sm text-slate-500">Tren pengaduan selama 12 bulan terakhir.</p>
+                    <h3 class="text-lg font-semibold text-white">Pengaduan Per Bulan</h3>
+                    <p class="mt-1 text-sm text-slate-200">Tren pengaduan selama 12 bulan terakhir.</p>
                 </div>
 
                 <div class="relative h-80 w-full">
@@ -44,10 +74,10 @@
             </div>
 
             {{-- Chart: Status Pengaduan (Donut) --}}
-            <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
                 <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-slate-900">Status Pengaduan</h3>
-                    <p class="mt-1 text-sm text-slate-500">Distribusi status pengaduan saat ini dengan persentase.</p>
+                    <h3 class="text-lg font-semibold text-white">Status Pengaduan</h3>
+                    <p class="mt-1 text-sm text-slate-200">Distribusi status pengaduan saat ini dengan persentase.</p>
                 </div>
 
                 <div class="relative h-80 w-full">
@@ -57,10 +87,10 @@
         </div>
 
         {{-- Statistik Per Kategori --}}
-        <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+        <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
             <div class="mb-6">
-                <h3 class="text-lg font-semibold text-slate-900">Statistik Per Kategori</h3>
-                <p class="mt-1 text-sm text-slate-500">Distribusi pengaduan berdasarkan kategori dengan persentase.</p>
+                <h3 class="text-lg font-semibold text-white">Statistik Per Kategori</h3>
+                <p class="mt-1 text-sm text-slate-200">Distribusi pengaduan berdasarkan kategori dengan persentase.</p>
             </div>
 
             @if ($kategoriStats->isNotEmpty())
@@ -68,11 +98,11 @@
                     @foreach ($kategoriStats as $kategori)
                         <div>
                             <div class="mb-2 flex items-center justify-between">
-                                <span class="text-sm font-semibold text-slate-700">{{ $kategori['nama_kategori'] }}</span>
-                                <span class="text-sm text-slate-500">{{ $kategori['total'] }} pengaduan · {{ $kategori['persentase'] }}%</span>
+                                <span class="text-sm font-semibold text-white">{{ $kategori['nama_kategori'] }}</span>
+                                <span class="text-sm text-slate-200">{{ $kategori['total'] }} pengaduan · {{ $kategori['persentase'] }}%</span>
                             </div>
-                            <div class="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                <div class="h-2.5 rounded-full bg-sky-500" style="width: {{ min($kategori['persentase'], 100) }}%"></div>
+                            <div class="h-2.5 w-full overflow-hidden rounded-full bg-slate-700/40">
+                                <div class="h-2.5 rounded-full bg-sky-400" style="width: {{ min($kategori['persentase'], 100) }}%"></div>
                             </div>
                         </div>
                     @endforeach
@@ -83,28 +113,28 @@
         </div>
 
         {{-- Tabel: 5 Pengaduan Terbaru --}}
-        <div class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+        <div class="rounded-3xl bg-slate-800/60 p-6 shadow-sm ring-1 ring-white/10">
             <div class="mb-6">
-                <h3 class="text-lg font-semibold text-slate-900">Pengaduan Terbaru</h3>
-                <p class="mt-1 text-sm text-slate-500">5 pengaduan terakhir dari masyarakat.</p>
+                <h3 class="text-lg font-semibold text-white">Pengaduan Terbaru</h3>
+                <p class="mt-1 text-sm text-slate-200">5 pengaduan terakhir dari masyarakat.</p>
             </div>
 
             <div class="flow-root">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <table class="min-w-full divide-y divide-slate-200">
-                            <thead class="bg-slate-50">
+                        <table class="min-w-full divide-y divide-white/10">
+                            <thead class="bg-slate-900/40">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Nomor Aduan</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Judul</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-200">Nomor Aduan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-200">Judul</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-200">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100 bg-white">
+                            <tbody class="divide-y divide-white/10">
                                 @foreach ($latestPengaduan as $item)
-                                    <tr class="hover:bg-slate-50 transition-colors">
-                                        <td class="whitespace-nowrap px-4 py-4 text-sm font-medium text-slate-900">{{ $item['nomor'] }}</td>
-                                        <td class="px-4 py-4 text-sm text-slate-700">{{ $item['judul'] }}</td>
+                                    <tr class="hover:bg-slate-700/30 transition-colors">
+                                        <td class="whitespace-nowrap px-4 py-4 text-sm font-medium text-white">{{ $item['nomor'] }}</td>
+                                        <td class="px-4 py-4 text-sm text-slate-200">{{ $item['judul'] }}</td>
                                         <td class="whitespace-nowrap px-4 py-4 text-sm">
                                             @if ($item['status'] === 'menunggu')
                                                 <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">

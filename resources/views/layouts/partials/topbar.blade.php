@@ -1,6 +1,35 @@
 <header class="border-b border-white/10 bg-slate-900/70 px-4 py-4 shadow-sm backdrop-blur-xl sm:px-6 lg:px-8">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-center gap-3">
+            <form action="{{ route('pengaduan.index') }}" method="GET" class="hidden sm:flex items-center relative">
+                <label for="q" class="sr-only">Cari pengaduan</label>
+                <div class="relative">
+                    <input id="q" name="q" value="{{ request('q') }}" placeholder="Cari tiket atau judul..." type="search" class="w-64 rounded-2xl border border-white/10 bg-slate-800/80 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+                    <button type="submit" class="absolute right-1 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:text-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="searchSuggestions" class="absolute mt-1 w-80 rounded-xl border border-white/10 bg-slate-900/95 p-1 shadow-lg hidden" role="listbox" aria-label="Hasil pencarian"></div>
+            </form>
+            
+            <!-- Mobile search toggle -->
+            <button id="mobileSearchToggle" class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-800/80 text-slate-100 shadow-sm" aria-label="Cari">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+                </svg>
+            </button>
+
+            <div id="mobileSearchOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+                <div class="w-full max-w-md rounded-xl bg-slate-900 p-4">
+                    <div class="flex items-center gap-2">
+                        <input id="mobile-q" placeholder="Cari tiket atau judul..." type="search" class="w-full rounded-2xl border border-white/10 bg-slate-800/80 px-3 py-2 text-sm text-slate-200" />
+                        <button id="mobileSearchClose" class="rounded-full px-3 py-2 text-slate-200">Batal</button>
+                    </div>
+                    <div id="mobileSearchSuggestions" class="mt-2 rounded-md"></div>
+                </div>
+            </div>
             <button type="button" data-sidebar-toggle class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-800/80 text-slate-100 shadow-sm lg:hidden" aria-label="Buka menu">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
@@ -95,3 +124,158 @@
         </div>
     </div>
 </header>
+
+<script>
+    (function () {
+        const input = document.getElementById('q');
+        const suggestions = document.getElementById('searchSuggestions');
+        const mobileToggle = document.getElementById('mobileSearchToggle');
+        const mobileOverlay = document.getElementById('mobileSearchOverlay');
+        const mobileClose = document.getElementById('mobileSearchClose');
+        const mobileInput = document.getElementById('mobile-q');
+        const mobileSuggestions = document.getElementById('mobileSearchSuggestions');
+        if (!input || !suggestions) return;
+
+        let timer = null;
+        let activeIndex = -1;
+
+        function statusBadge(status) {
+            const map = {
+                'menunggu': 'bg-amber-400/10 text-amber-300 border-amber-400/20',
+                'diproses': 'bg-cyan-400/10 text-cyan-300 border-cyan-400/20',
+                'selesai': 'bg-emerald-400/10 text-emerald-300 border-emerald-400/20',
+                'ditolak': 'bg-rose-400/10 text-rose-300 border-rose-400/20',
+            };
+            return map[status] || 'bg-slate-700 text-slate-200 border-white/10';
+        }
+
+        function renderItems(items, container) {
+            container = container || suggestions;
+            if (!items || items.length === 0) {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                activeIndex = -1;
+                return;
+            }
+
+            container.innerHTML = items.map((i, idx) => `
+                <a href="${i.url}" data-idx="${idx}" role="option" class="result-item block rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="font-medium">${i.nomor} — ${escapeHtml(i.judul)}</div>
+                            <div class="text-xs text-slate-400 mt-1">${i.created_at}</div>
+                        </div>
+                        <div class="ml-2 self-start">
+                            <span class="inline-flex items-center gap-2 rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(i.status)} border">${i.status}</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+
+            // reset active
+            activeIndex = -1;
+            container.classList.remove('hidden');
+        }
+
+        function escapeHtml(unsafe) {
+            return (unsafe || '')
+                .toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function fetchAndRender(q, container) {
+            fetch(`{{ route('pengaduan.search') }}?q=` + encodeURIComponent(q), {
+                headers: { 'Accept': 'application/json' }
+            }).then(r => r.json()).then(data => {
+                renderItems(data, container);
+            }).catch(() => renderItems([], container));
+        }
+
+        input.addEventListener('input', function () {
+            const q = this.value.trim();
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                if (q.length === 0) {
+                    renderItems([]);
+                    return;
+                }
+                fetchAndRender(q);
+            }, 200);
+        });
+
+        input.addEventListener('keydown', function (e) {
+            const items = suggestions.querySelectorAll('.result-item');
+            if (!items.length) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = Math.min(activeIndex + 1, items.length - 1);
+                updateActive(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = Math.max(activeIndex - 1, 0);
+                updateActive(items);
+            } else if (e.key === 'Enter') {
+                const el = items[activeIndex];
+                if (el) {
+                    window.location = el.getAttribute('href');
+                    e.preventDefault();
+                }
+            } else if (e.key === 'Escape') {
+                renderItems([]);
+            }
+        });
+
+        function updateActive(items) {
+            items.forEach((it, i) => {
+                if (i === activeIndex) {
+                    it.classList.add('bg-slate-800');
+                    it.scrollIntoView({ block: 'nearest' });
+                } else {
+                    it.classList.remove('bg-slate-800');
+                }
+            });
+        }
+
+        // click suggestions
+        suggestions.addEventListener('click', function (e) {
+            const a = e.target.closest('a');
+            if (a) return; // normal navigation
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!suggestions.contains(e.target) && e.target !== input) {
+                suggestions.classList.add('hidden');
+            }
+        });
+
+        // Mobile toggle
+        if (mobileToggle && mobileOverlay && mobileClose && mobileInput && mobileSuggestions) {
+            mobileToggle.addEventListener('click', function () {
+                mobileOverlay.classList.remove('hidden');
+                mobileInput.focus();
+            });
+
+            mobileClose.addEventListener('click', function () {
+                mobileOverlay.classList.add('hidden');
+                mobileSuggestions.innerHTML = '';
+            });
+
+            mobileInput.addEventListener('input', function () {
+                const q = this.value.trim();
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    if (q.length === 0) {
+                        mobileSuggestions.innerHTML = '';
+                        return;
+                    }
+                    fetchAndRender(q, mobileSuggestions);
+                }, 200);
+            });
+        }
+    })();
+</script>
