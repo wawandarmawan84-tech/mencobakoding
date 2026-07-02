@@ -1,120 +1,121 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
+<div class="mx-auto max-w-5xl">
+    <div class="mb-6 flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-semibold">Buat Pengaduan Baru</h1>
-            <p class="text-sm text-slate-600">Isi laporan Anda dalam beberapa langkah dan preview lampiran sebelum submit.</p>
+            <p class="text-sm font-medium text-cyan-300">Buat pengaduan</p>
+            <h1 class="text-2xl font-semibold text-white">Buat Pengaduan Baru</h1>
+            <p class="mt-1 text-sm text-slate-400">Isi laporan Anda dalam beberapa langkah dan preview lampiran sebelum submit.</p>
         </div>
-        <a href="{{ route('pengaduan.index') }}" class="text-sm text-blue-600 hover:underline">Kembali ke Daftar</a>
+        <a href="{{ route('pengaduan.index') }}" class="text-sm text-cyan-300 hover:text-cyan-200">Kembali ke Daftar</a>
     </div>
 
-    <form method="POST" action="{{ route('pengaduan.store') }}" enctype="multipart/form-data" id="pengaduanForm">
+    <form method="POST" action="{{ route('pengaduan.store') }}" enctype="multipart/form-data" id="pengaduanForm" class="space-y-5">
         @csrf
 
-        <div class="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="rounded-[24px] border border-white/10 bg-slate-900/70 p-5 shadow-lg shadow-black/20 backdrop-blur-xl">
             <div class="grid gap-3 sm:grid-cols-3">
-                <div class="rounded-lg border p-3 text-center {{ request()->old('step', 1) == 1 ? 'border-blue-500 bg-blue-50' : 'border-slate-200' }}">
-                    <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Langkah 1</p>
-                    <p class="mt-2 font-semibold">Informasi</p>
+                <div class="rounded-2xl border p-3 text-center {{ request()->old('step', 1) == 1 ? 'border-cyan-400 bg-cyan-400/10' : 'border-white/10 bg-slate-800/50' }}">
+                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Langkah 1</p>
+                    <p class="mt-2 font-semibold text-white">Informasi</p>
                 </div>
-                <div class="rounded-lg border p-3 text-center {{ request()->old('step', 1) == 2 ? 'border-blue-500 bg-blue-50' : 'border-slate-200' }}">
-                    <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Langkah 2</p>
-                    <p class="mt-2 font-semibold">Detail</p>
+                <div class="rounded-2xl border p-3 text-center {{ request()->old('step', 1) == 2 ? 'border-cyan-400 bg-cyan-400/10' : 'border-white/10 bg-slate-800/50' }}">
+                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Langkah 2</p>
+                    <p class="mt-2 font-semibold text-white">Detail</p>
                 </div>
-                <div class="rounded-lg border p-3 text-center {{ request()->old('step', 1) == 3 ? 'border-blue-500 bg-blue-50' : 'border-slate-200' }}">
-                    <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Langkah 3</p>
-                    <p class="mt-2 font-semibold">Lampiran</p>
+                <div class="rounded-2xl border p-3 text-center {{ request()->old('step', 1) == 3 ? 'border-cyan-400 bg-cyan-400/10' : 'border-white/10 bg-slate-800/50' }}">
+                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Langkah 3</p>
+                    <p class="mt-2 font-semibold text-white">Lampiran</p>
                 </div>
             </div>
         </div>
 
         <div id="step-1" class="step-panel">
-            <div class="space-y-5 bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+            <div class="space-y-5 rounded-[24px] border border-white/10 bg-slate-900/70 p-6 shadow-lg shadow-black/20 backdrop-blur-xl">
                 <div>
-                    <label for="kategori_id" class="block text-sm font-medium text-slate-700">Kategori</label>
-                    <select id="kategori_id" name="kategori_id" class="mt-2 block w-full rounded border-gray-200" required>
+                    <label for="kategori_id" class="mb-2 block text-sm font-medium text-slate-200">Kategori</label>
+                    <select id="kategori_id" name="kategori_id" class="mt-2 block w-full rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20" required>
                         <option value="">Pilih kategori</option>
                         @foreach($kategoris as $kategori)
                             <option value="{{ $kategori->id }}" {{ old('kategori_id') == $kategori->id ? 'selected' : '' }}>{{ $kategori->nama_kategori }}</option>
                         @endforeach
                     </select>
-                    @error('kategori_id')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('kategori_id')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
-                    <label for="judul" class="block text-sm font-medium text-slate-700">Judul Pengaduan</label>
-                    <input id="judul" name="judul" value="{{ old('judul') }}" type="text" class="mt-2 block w-full rounded border-gray-200" placeholder="Contoh: Jalan rusak di RT 05" required>
-                    @error('judul')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    <label for="judul" class="mb-2 block text-sm font-medium text-slate-200">Judul Pengaduan</label>
+                    <input id="judul" name="judul" value="{{ old('judul') }}" type="text" class="mt-2 block w-full rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20" placeholder="Contoh: Jalan rusak di RT 05" required>
+                    @error('judul')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
-                    <label for="prioritas" class="block text-sm font-medium text-slate-700">Prioritas</label>
-                    <select id="prioritas" name="prioritas" class="mt-2 block w-full rounded border-gray-200">
+                    <label for="prioritas" class="mb-2 block text-sm font-medium text-slate-200">Prioritas</label>
+                    <select id="prioritas" name="prioritas" class="mt-2 block w-full rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20">
                         <option value="normal" {{ old('prioritas') === 'normal' ? 'selected' : '' }}>Normal</option>
                         <option value="rendah" {{ old('prioritas') === 'rendah' ? 'selected' : '' }}>Rendah</option>
                         <option value="tinggi" {{ old('prioritas') === 'tinggi' ? 'selected' : '' }}>Tinggi</option>
                         <option value="darurat" {{ old('prioritas') === 'darurat' ? 'selected' : '' }}>Darurat</option>
                     </select>
-                    @error('prioritas')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('prioritas')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>
 
         <div id="step-2" class="step-panel hidden">
-            <div class="space-y-5 bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+            <div class="space-y-5 rounded-[24px] border border-white/10 bg-slate-900/70 p-6 shadow-lg shadow-black/20 backdrop-blur-xl">
                 <div>
-                    <label for="isi_pengaduan" class="block text-sm font-medium text-slate-700">Uraian Pengaduan</label>
-                    <textarea id="isi_pengaduan" name="isi_pengaduan" rows="6" class="mt-2 block w-full rounded border-gray-200" placeholder="Jelaskan masalah secara rinci" required>{{ old('isi_pengaduan') }}</textarea>
-                    @error('isi_pengaduan')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    <label for="isi_pengaduan" class="mb-2 block text-sm font-medium text-slate-200">Uraian Pengaduan</label>
+                    <textarea id="isi_pengaduan" name="isi_pengaduan" rows="6" class="mt-2 block w-full rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20" placeholder="Jelaskan masalah secara rinci" required>{{ old('isi_pengaduan') }}</textarea>
+                    @error('isi_pengaduan')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div>
-                        <label for="lokasi" class="block text-sm font-medium text-slate-700">Lokasi</label>
-                        <input id="lokasi" name="lokasi" value="{{ old('lokasi') }}" type="text" class="mt-2 block w-full rounded border-gray-200" placeholder="Contoh: Jl. Melati No. 12">
-                        @error('lokasi')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                        <label for="lokasi" class="mb-2 block text-sm font-medium text-slate-200">Lokasi</label>
+                        <input id="lokasi" name="lokasi" value="{{ old('lokasi') }}" type="text" class="mt-2 block w-full rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20" placeholder="Contoh: Jl. Melati No. 12">
+                        @error('lokasi')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700">Koordinat (opsional)</label>
+                        <label class="mb-2 block text-sm font-medium text-slate-200">Koordinat (opsional)</label>
                         <div class="mt-2 grid gap-3 sm:grid-cols-2">
-                            <input name="latitude" value="{{ old('latitude') }}" type="text" class="rounded border-gray-200 px-3 py-2" placeholder="Latitude">
-                            <input name="longitude" value="{{ old('longitude') }}" type="text" class="rounded border-gray-200 px-3 py-2" placeholder="Longitude">
+                            <input name="latitude" value="{{ old('latitude') }}" type="text" class="rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20" placeholder="Latitude">
+                            <input name="longitude" value="{{ old('longitude') }}" type="text" class="rounded-2xl border border-white/10 bg-slate-800/70 px-3 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20" placeholder="Longitude">
                         </div>
-                        @error('latitude')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
-                        @error('longitude')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                        @error('latitude')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
+                        @error('longitude')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="step-3" class="step-panel hidden">
-            <div class="space-y-5 bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+            <div class="space-y-5 rounded-[24px] border border-white/10 bg-slate-900/70 p-6 shadow-lg shadow-black/20 backdrop-blur-xl">
                 <div>
-                    <label for="lampiran" class="block text-sm font-medium text-slate-700">Lampiran</label>
-                    <input id="lampiran" name="lampiran[]" type="file" multiple accept="image/*,.pdf" class="mt-2 block w-full text-sm text-slate-600" />
-                    @error('lampiran')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
-                    @error('lampiran.*')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    <label for="lampiran" class="mb-2 block text-sm font-medium text-slate-200">Lampiran</label>
+                    <input id="lampiran" name="lampiran[]" type="file" multiple accept="image/*,.pdf" class="mt-2 block w-full text-sm text-slate-400" />
+                    @error('lampiran')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
+                    @error('lampiran.*')<p class="mt-2 text-sm text-rose-400">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
-                    <p class="text-sm font-medium text-slate-700">Preview Lampiran</p>
+                    <p class="text-sm font-medium text-slate-200">Preview Lampiran</p>
                     <div id="lampiranPreview" class="mt-3 grid gap-4 sm:grid-cols-2"></div>
                 </div>
 
-                <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-                    <p class="font-medium">Ringkasan</p>
+                <div class="rounded-2xl border border-white/10 bg-slate-800/50 p-4 text-sm text-slate-300">
+                    <p class="font-medium text-white">Ringkasan</p>
                     <p class="mt-2">Pastikan semua data sudah benar sebelum mengirim pengaduan.</p>
                 </div>
             </div>
         </div>
 
         <div class="mt-6 flex items-center justify-between">
-            <button type="button" id="backButton" class="hidden inline-flex items-center px-4 py-2 border rounded text-slate-700 bg-white" onclick="changeStep(-1)">Kembali</button>
+            <button type="button" id="backButton" class="hidden inline-flex items-center rounded-full border border-white/10 bg-slate-800/70 px-4 py-2 text-sm text-slate-200" onclick="changeStep(-1)">Kembali</button>
             <div class="flex gap-3">
-                <button type="button" id="nextButton" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded" onclick="changeStep(1)">Lanjutkan</button>
-                <button type="submit" id="submitButton" class="hidden inline-flex items-center px-4 py-2 bg-green-600 text-white rounded">Kirim Pengaduan</button>
+                <button type="button" id="nextButton" class="inline-flex items-center rounded-full bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300" onclick="changeStep(1)">Lanjutkan</button>
+                <button type="submit" id="submitButton" class="hidden inline-flex items-center rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300">Kirim Pengaduan</button>
             </div>
         </div>
     </form>
@@ -153,21 +154,21 @@
     function renderPreview(files) {
         lampiranPreview.innerHTML = '';
         if (!files.length) {
-            lampiranPreview.innerHTML = '<p class="text-sm text-slate-500">Belum ada file yang dipilih.</p>';
+            lampiranPreview.innerHTML = '<p class="text-sm text-slate-400">Belum ada file yang dipilih.</p>';
             return;
         }
 
         Array.from(files).forEach(file => {
             const reader = new FileReader();
             const previewCard = document.createElement('div');
-            previewCard.className = 'rounded-lg border border-slate-200 p-4 bg-white';
+            previewCard.className = 'rounded-2xl border border-white/10 bg-slate-800/60 p-4';
 
             const title = document.createElement('p');
-            title.className = 'font-medium text-slate-800';
+            title.className = 'font-medium text-white';
             title.textContent = file.name;
 
             const meta = document.createElement('p');
-            meta.className = 'text-sm text-slate-500 mt-1';
+            meta.className = 'mt-1 text-sm text-slate-400';
             meta.textContent = `${file.type || 'file'} • ${(file.size / 1024).toFixed(2)} KB`;
 
             previewCard.appendChild(title);
@@ -175,7 +176,7 @@
 
             if (file.type.startsWith('image/')) {
                 const image = document.createElement('img');
-                image.className = 'mt-3 max-h-40 w-full rounded object-cover border border-slate-200';
+                image.className = 'mt-3 max-h-40 w-full rounded-xl object-cover border border-white/10';
                 reader.onload = () => { image.src = reader.result; };
                 reader.readAsDataURL(file);
                 previewCard.appendChild(image);

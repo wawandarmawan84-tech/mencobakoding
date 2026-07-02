@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use App\Models\Pengaduan;
+use App\Notifications\PengaduanAssignedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -50,12 +51,16 @@ class PengaduanController extends Controller
      */
     public function index(Request $request)
     {
-        $userId = auth()->id();
+        $user = auth()->user();
 
         $status = $request->query('status');
         $kategoriId = $request->query('kategori_id');
 
-        $query = Pengaduan::where('user_id', $userId);
+        // Admin sees all pengaduan and can dispatch; warga sees only their own
+        $query = Pengaduan::with(['kategori', 'user', 'petugas']);
+        if (! $user->isAdmin()) {
+            $query->where('user_id', $user->id);
+        }
 
         if ($status) {
             $query->where('status', $status);
@@ -69,7 +74,12 @@ class PengaduanController extends Controller
 
         $kategoris = Kategori::where('is_active', 1)->orderBy('nama_kategori')->get();
 
-        return view('pengaduan.index', compact('pengaduans', 'kategoris'));
+        $petugasList = [];
+        if ($user->isAdmin()) {
+            $petugasList = \App\Models\User::where('role', 'petugas')->orderBy('name')->get();
+        }
+
+        return view('pengaduan.index', compact('pengaduans', 'kategoris', 'petugasList'));
     }
 
     /**
@@ -90,8 +100,10 @@ class PengaduanController extends Controller
         abort_unless(auth()->user()->isPetugas(), 403);
 
         $prioritas = $request->query('prioritas');
+        $user = auth()->user();
 
         $query = Pengaduan::with(['kategori', 'user'])
+            ->where('petugas_id', $user->id)
             ->whereIn('status', ['menunggu', 'diproses']);
 
         if ($prioritas) {
@@ -128,20 +140,65 @@ class PengaduanController extends Controller
      */
     public function updateStatus(Request $request, Pengaduan $pengaduan): RedirectResponse
     {
-        abort_unless(auth()->user()->isPetugas(), 403);
+        $user = auth()->user();
+
+        abort_unless($user->isPetugas() || $user->isAdmin(), 403);
+
+        if ($user->isPetugas() && $pengaduan->petugas_id !== $user->id) {
+            abort(403, 'Laporan ini belum ditugaskan kepada Anda.');
+        }
 
         $validated = $request->validate([
             'status' => ['required', 'in:menunggu,diproses,selesai,ditolak'],
             'catatan_petugas' => ['nullable', 'string'],
+            'petugas_id' => ['nullable', 'integer', 'exists:users,id'],
+            'evidence_photo' => ['nullable', 'file', 'image', 'max:5120'],
         ]);
+
+        $newPetugasId = $validated['petugas_id'] ?? ($user->isPetugas() ? $user->id : $pengaduan->petugas_id);
 
         $pengaduan->update([
             'status' => $validated['status'],
             'catatan_petugas' => $validated['catatan_petugas'] ?? null,
-            'petugas_id' => auth()->id(),
+            'petugas_id' => $newPetugasId,
             'tanggal_selesai' => $validated['status'] === 'selesai' ? now()->toDateString() : null,
         ]);
 
+        if ($validated['status'] === 'selesai' && $request->hasFile('evidence_photo')) {
+            $file = $request->file('evidence_photo');
+            $path = $file->store("public/pengaduan/evidence/{$pengaduan->id}");
+
+            $pengaduan->lampiran()->create([
+                'nama_file' => $file->getClientOriginalName(),
+                'path_file' => str_replace('public/', '', $path),
+                'tipe_file' => $file->getClientMimeType(),
+                'ukuran_file' => $file->getSize(),
+            ]);
+        }
+
+        if ($user->isAdmin() && $newPetugasId) {
+            $petugas = \App\Models\User::find($newPetugasId);
+            if ($petugas) {
+                $petugas->notify(new PengaduanAssignedNotification($pengaduan));
+            }
+        }
+
         return redirect()->route('pengaduan.show', $pengaduan)->with('success', 'Status pengaduan berhasil diperbarui.');
+    }
+
+    /**
+     * Show status edit form for admin.
+     */
+    public function status(Pengaduan $pengaduan)
+    {
+        $user = auth()->user();
+
+        abort_unless($user->isAdmin(), 403);
+
+        $pengaduan->load(['kategori', 'lampiran', 'petugas', 'user']);
+
+        $petugasList = \App\Models\User::where('role', 'petugas')->orderBy('name')->get();
+
+        return view('pengaduan.status', compact('pengaduan', 'petugasList'));
     }
 }
