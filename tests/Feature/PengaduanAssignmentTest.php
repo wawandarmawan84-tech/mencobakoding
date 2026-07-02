@@ -60,4 +60,35 @@ class PengaduanAssignmentTest extends TestCase
             return $pengaduans->contains('id', $assigned->id) && $pengaduans->doesntContain('id', null);
         });
     }
+
+    public function test_pengaduan_submission_shows_success_notification(): void
+    {
+        $user = User::factory()->create();
+        $kategori = Kategori::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('pengaduan.store'), [
+            'kategori_id' => $kategori->id,
+            'judul' => 'Lampu jalan mati',
+            'isi_pengaduan' => 'Lampu jalan di depan rumah mati selama dua hari.',
+            'lokasi' => 'Jl. Merdeka',
+            'prioritas' => 'normal',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success', 'Pengaduan berhasil dikirim.');
+    }
+
+    public function test_pengaduan_submission_shows_error_notification_when_validation_fails(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('pengaduan.store'), [
+            'kategori_id' => 999,
+            'judul' => '',
+            'isi_pengaduan' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['kategori_id', 'judul', 'isi_pengaduan']);
+        $response->assertSessionHas('error', 'Gagal mengirim pengaduan. Periksa kembali data yang Anda masukkan.');
+    }
 }

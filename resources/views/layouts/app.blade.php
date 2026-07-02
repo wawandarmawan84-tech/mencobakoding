@@ -21,6 +21,26 @@
                 <div class="flex-1">
                     @include('layouts.partials.topbar')
 
+                    <div class="mx-auto max-w-6xl px-4 pt-4 sm:px-6 lg:px-8">
+                        @if(session('success'))
+                            <div class="mb-4 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200 shadow-lg shadow-emerald-950/20">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="mb-4 rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200 shadow-lg shadow-rose-950/20">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
+                        @if(session('status'))
+                            <div class="mb-4 rounded-2xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-3 text-sm text-cyan-200 shadow-lg shadow-cyan-950/20">
+                                {{ session('status') }}
+                            </div>
+                        @endif
+                    </div>
+
                     <main class="p-4 sm:p-6 lg:p-8">
                         @yield('content')
                     </main>
